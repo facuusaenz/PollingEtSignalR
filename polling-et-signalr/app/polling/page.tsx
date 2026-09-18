@@ -11,6 +11,12 @@ export default function Home() {
 
   useEffect(() => {
     updateTasks();
+    const interval = setInterval(() => {
+      updateTasks();
+    }, 1000);
+
+    //Nettoyage de l'interval, pour nettoyer la mémoire
+    return () => clearInterval(interval);
   }, []);
 
   async function handleTaskAdd(taskName: string) {
@@ -19,6 +25,7 @@ export default function Home() {
     //   taskName
     // });
     const appelServeur = await axios.post(`http://localhost:5042/api/UselessTasks/Add?taskText=${taskName}`);
+    updateTasks();
     console.log(appelServeur.data);
   }
 
@@ -29,6 +36,7 @@ export default function Home() {
     let tasksCopy : UselessTask[] = [...tasks];    
     tasksCopy.find(task => task.id === id)!.completed = true;
     setTasks(tasksCopy);
+    updateTasks();
   }
 
   async function updateTasks() {
